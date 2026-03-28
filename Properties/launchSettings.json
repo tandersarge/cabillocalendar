@@ -2,8 +2,9 @@
   "profiles": {
     "cabillocalendar": {
       "commandName": "Project",
+      "commandLineArgs": "\r\n",
       "sqlDebugging": true,
-      "nativeDebugging": true
+      "nativeDebugging": false
     }
   }
 }
