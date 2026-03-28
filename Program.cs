@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AccountManagementAppService;
-using AccountDataService;
+﻿using AccountDataService;
 
 namespace CabilloCalendar
 {
     internal class Program
     {
-        static string[] events = new string[5];
-        static string[] dates = new string[5];
-        static int eventCount = 0;
+        private static CalendarBL calendarBL = new CalendarBL();
 
         static void Main(string[] args)
         {
@@ -22,8 +14,8 @@ namespace CabilloCalendar
 
             while (manageOption)
             {
-                Console.WriteLine("\nOptions:\n1 = (Add Event), 2 = (View events), 3 = (Update Event), 4 = (Delete Event)");
-                Console.Write("Select an option (1, 2, 3, 4): ");
+                Console.WriteLine("\nOptions:\n1 = (Add Event), 2 = (View events), 3 = (Update Event), 4 = (Delete Event), 5 = (Exit)");
+                Console.Write("Select an option (1, 2, 3, 4, 5): ");
                 string choice = Console.ReadLine();
 
                 switch (choice)
@@ -40,6 +32,10 @@ namespace CabilloCalendar
                     case "4":
                         DeleteEvent();
                         break;
+                    case "5":
+                        manageOption = false;
+                        Console.WriteLine("Goodbye!");
+                        break;
                     default:
                         Console.WriteLine("Invalid option. Please try again.");
                         break;
@@ -49,60 +45,71 @@ namespace CabilloCalendar
 
         static void AddEvent()
         {
-            if (eventCount < events.Length)
-            {
-                Console.Write("Enter a date (MM/DD/YYYY) \n(for example: 12/1/2005): ");
-                string inputDate = Console.ReadLine();
-                Console.Write("Enter your event for this day: ");
-                string inputEvent = Console.ReadLine();
+            Console.Write("Enter a date (MM/DD/YYYY) \n(for example: 12/1/2005): ");
+            string inputDate = Console.ReadLine();
+            Console.Write("Enter your event for this day: ");
+            string inputEvent = Console.ReadLine();
 
-                if (!string.IsNullOrWhiteSpace(inputDate) && !string.IsNullOrWhiteSpace(inputEvent))
-                {
-                    dates[eventCount] = inputDate;
-                    events[eventCount] = inputEvent;
-                    eventCount++;
-                    Console.WriteLine("Your event has been successfully added!\n");
-                }
-                else
-                {
-                    Console.WriteLine("Error: Date and Event cannot be empty. Please input your event for it to be added.\n");
-                }
+            if (calendarBL.AddEvent(inputDate, inputEvent))
+            {
+                Console.WriteLine("Your event has been successfully added!\n");
             }
             else
             {
-                Console.WriteLine("Calendar is full! (Limit is 5 events)\n");
+                Console.WriteLine("Error: Could not add event. Please check your input or calendar capacity.\n");
             }
         }
 
         static void ViewEvents()
         {
             Console.WriteLine("\n--- YOUR SCHEDULES/EVENTS ---");
-
-            if (eventCount == 0)
-            {
-                Console.WriteLine("Your calendar is currently empty. Please select '1' to add an event to your calendar.\n");
-            }
-            else
-            {
-                for (int i = 0; i < eventCount; i++)
-                {
-                    Console.WriteLine($"{i + 1}. ({dates[i]}) : {events[i]}");
-                }
-            }
+            string result = calendarBL.ViewEvents();
+            Console.WriteLine(result);
         }
 
         static void UpdateEvent()
         {
-            Console.Write("Enter the number of date to update your event: ");
-            if (int.TryParse(Console.ReadLine(), out int index) && index > 0 && index <= eventCount)
+            Console.Write("Enter the ID of event to update: ");
+            if (int.TryParse(Console.ReadLine(), out int id) && id > 0)
             {
-                Console.WriteLine("Invalid event number.\n");
+                Console.Write("Enter new date (MM/DD/YYYY): ");
+                string newDate = Console.ReadLine();
+                Console.Write("Enter new event: ");
+                string newEvent = Console.ReadLine();
+
+                if (!string.IsNullOrWhiteSpace(newDate) && !string.IsNullOrWhiteSpace(newEvent))
+                {
+                    if (calendarBL.UpdateEvent(id, newDate, newEvent))
+                    {
+                        Console.WriteLine("Event updated successfully!\n");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error: Could not find an event with that ID.\n");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Error: Date and Event cannot be empty.\n");
+                }
             }
         }
 
         static void DeleteEvent()
         {
             Console.Write("Enter the number of the event to delete: ");
+            if (int.TryParse(Console.ReadLine(), out int index) && index > 0)
+            {
+                if (calendarBL.DeleteEvent(index))
+                {
+                    Console.WriteLine("Event deleted successfully!\n");
+                }
+                else
+                {
+                    Console.WriteLine("Invalid event number.\n");
+                }
+            }
+            else
             {
                 Console.WriteLine("Invalid event number.\n");
             }

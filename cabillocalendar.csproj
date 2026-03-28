@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Program.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\AccountManagementDataModel\AccountManagementDataModel.csproj" />
     <ProjectReference Include="..\businessLogicLayer\AccountManagementAppService.csproj" />
     <ProjectReference Include="..\dataDlLayer\AccountManagementDataService.csproj" />

@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "cabillocalendar": {
+      "commandName": "Project",
+      "sqlDebugging": true,
+      "nativeDebugging": true
+    }
+  }
+}
